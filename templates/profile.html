@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>個人頁面</title>
-    <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./../components/navbar.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
 </head>
 <body>
     <div class="profile-container">
         <div class="avatar" id="avatar">
-            
+            <img id="avatar-image" src="https://picsum.photos/200/300" alt="頭像">
         </div>
         <div class="personal-info" id="personal-info">
-            
+            <h2>姓名：{{ user.username }}</h2>
+            <p><strong>性別：</strong>{{ user.gender }}</p>
+            <p><strong>生日：</strong>{{ user.birthday }}</p>
+            <p><strong>自我介紹：</strong>{{ user.bio}}</p>
+            <p><p><strong>個人網站：</strong><a href="{{ user.website_href }}">{{ user.website_name }}</a></p></p>
         </div>
     </div>
     <div class="articles-container">
@@ -39,7 +43,11 @@
             </tbody>
         </table>
     </div>
-    <script src="./script.js"></script>
-    <script src="./../components/navbar.js"></script>
+    <script src="{{ url_for('static', filename='profile.js') }}"></script>
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+    <script>
+        // Define global variable to pass 'username' from Flask session to external JS
+        window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
+    </script>
 </body>
 </html>

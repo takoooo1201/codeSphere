@@ -34,13 +34,13 @@ function renderProfile() {
     const info = document.getElementById('personal-info');
     const stats = document.getElementById('stats-row');
 
-    avatar.innerHTML = `<img id="avatar-image" src="${profile.avatar_url}" alt="頭像">`;
+    // avatar.innerHTML = `<img id="avatar-image" src="${profile.avatar_url}" alt="頭像">`;
     
-    info.innerHTML += `<h2>姓名：${profile.name}</h2>`;
-    info.innerHTML += `<p><strong>性別：</strong>${profile.gender}</p>`;
-    info.innerHTML += `<p><strong>生日：</strong>${profile.birthday}</p>`;
-    info.innerHTML += `<p><strong>自我介紹：</strong>${profile.bio}</p>`;
-    info.innerHTML += `<p><p><strong>個人網站：</strong><a href="${profile.website_href}">${profile.website_name}</a></p></p>`
+    // info.innerHTML += `<h2>姓名：${profile.name}</h2>`;
+    // info.innerHTML += `<p><strong>性別：</strong>${profile.gender}</p>`;
+    // info.innerHTML += `<p><strong>生日：</strong>${profile.birthday}</p>`;
+    // info.innerHTML += `<p><strong>自我介紹：</strong>${profile.bio}</p>`;
+    // info.innerHTML += `<p><p><strong>個人網站：</strong><a href="${profile.website_href}">${profile.website_name}</a></p></p>`
 
     stats.innerHTML += `<td>${profile.articles}</td>`;
     stats.innerHTML += `<td>${profile.likes}</td>`;

@@ -8,7 +8,7 @@ function createNavbar(username) {
                 <a href="./../forum/forum.html">Forum</a>
             </div>
             <div class="nav-right">
-                <a href="./../user.html">${username}</a>
+                <a href="/profile">${username}</a>
                 <a href="./../entrance/entrancePage.html">Login</a>
                 <a href="./../register/registerPage.html">Register</a>
             </div>

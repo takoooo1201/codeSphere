@@ -252,5 +252,38 @@ def download():
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
+@app.route('/profile')
+def profile():
+    # 從資料庫獲取用戶數據
+    user = get_user_from_database()
+    if user is None:
+        return redirect(url_for('entrance'))
+    posts = get_posts_from_database
+    # 渲染模板，傳遞 user 對象
+    return render_template('profile.html', user=user)
+
+def get_user_from_database():
+    # 假設這裡有一個函數來從資料庫提取數據
+    conn = get_db()
+    cursor = conn.cursor()
+    if 'username' in session and session['username']:
+        cursor.execute('''select * from users where name = ?''', (session['username'],))
+        res = cursor.fetchone()
+        return {
+            'username': res[1],
+            'gender': res[5],
+            'birthday': res[4],
+            'bio': '一個熱愛技術的開發者',
+            'website_href': 'http://example.com',
+            'website_name': 'example.com'
+        }
+    else:
+        return None
+
+def get_posts_from_database(user_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''select * from users where name = ?''', (session['username'],))
+
 if __name__ == '__main__':
     app.run(debug=True)
