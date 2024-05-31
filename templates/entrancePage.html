@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux Terminal Blog Entrance</title>
+    <!-- <link rel="stylesheet" href="entrancePage.css"> -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='entrancePage.css') }}">
+    
+</head>
+<body>
+    <div class="terminal">
+        <pre>
+            
+            _________            .___       _________      .__                          
+            \_   ___ \  ____   __| _/____  /   _____/_____ |  |__   ___________   ____  
+            /    \  \/ /  _ \ / __ |/ __ \ \_____  \\____ \|  |  \_/ __ \_  __ \_/ __ \ 
+            \     \___(  <_> ) /_/ \  ___/ /        \  |_> >   Y  \  ___/|  | \/\  ___/ 
+             \______  /\____/\____ |\___  >_______  /   __/|___|  /\___  >__|    \___  >
+                    \/            \/    \/        \/|__|        \/     \/            \/ 
+                                                                                        
+                                                                                        
+                                                                                        
+                                                                                        
+                                                                                        
+                                                                                        
+            </pre>
+        
+        <pre id="terminal-content">Welcome to CodeSphere, feel free to discuss anything here
+enter "new" to create an account
+enter "guest" to browse the website
+enter your account and password to log in
+</pre>
+        <div class="input-line">
+            <span id="prompt">CodeSphere@entrance:~$ </span>
+            <input type="text" id="terminal-input" autofocus onkeypress="handleInput(event)">
+        </div>
+    </div>
+    <!-- <script src="entrancePage.js"></script> -->
+    <!-- <script src="{{ url_for('static', filename='entrancePage.js') }}"></script> -->
+    <script>
+        const terminalContent = document.getElementById('terminal-content');
+const terminalInput = document.getElementById('terminal-input');
+const prompt = document.getElementById('prompt');
+
+function handleInput(event) {
+    if (event.key === 'Enter') {
+        const command = terminalInput.value.trim();
+        terminalInput.value = '';
+        processCommand(command);
+    }
+}
+
+function processCommand(command) {
+    terminalContent.textContent += '\n' + prompt.textContent + command;
+
+    if (command === 'guest') {
+        window.location.href = '{{ url_for('test') }}';//'homePage.html'
+    } else if (command === 'new') {
+        window.location.href = 'registerPage.html';
+    } else {
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: command }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                prompt.textContent = 'CodeSphere@' + command + ':~$ ';
+                p=data.password
+                console.log(p)
+                terminalInput.onkeypress = handlePasswordInput.bind(null,p);//
+            } else {
+                terminalContent.textContent += '\n' + data.message;
+                terminalInput.focus();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            terminalContent.textContent += '\nServer error, please try again later';
+        });
+    }
+}
+
+function handlePasswordInput( mypassword,event) {
+    console.log(mypassword)
+    if (event.key === 'Enter') {
+        const password = terminalInput.value.trim();
+        if (password === mypassword) {
+            window.location.href = '{{ url_for('test') }}';
+        } else {
+            terminalContent.textContent += '\n' + 'Invalid username or password';
+            prompt.textContent = 'CodeSphere@entrance:~$ ';
+            terminalInput.onkeypress = handleInput;
+        }
+        terminalInput.value = '';
+    }
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Blog</title>
+    <link rel="stylesheet" href="createPage.css">
+    <link rel="stylesheet" href="./../components/navbar.css">
+</head>
+<body>
+    <div class="page-content">
+        <h1>Simple Blog</h1>
+        <form id="postForm">
+            <label for="title">Title:</label>
+            <input type="text" id="title" required><br>
+            <label for="summary">Summary:</label>
+            <input type="text" id="summary" required><br>
+            <label for="content">Content (Markdown Supported):</label><br>
+            <textarea id="content" rows="5" required></textarea><br>
+            <div class="dropdown">
+                <button class="dropbtn">Save Draft</button>
+                <div class="dropdown-content">
+                    <button type="button" id="saveDraftBtn">Save Draft</button>
+                    <button type="submit">Publish Post</button>
+                </div>
+            </div>
+        </form>
+        <div id="posts"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="createPage.js"></script>
+    <script src="./../components/navbar.js"></script>
+</body>
+</html>

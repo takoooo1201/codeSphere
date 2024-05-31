@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./../components/navbar.css">
+</head>
+<body>
+    <div class="login-container">
+        <form action="/submit-form" method="post">
+            <h2>Register</h2>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="mail">E-mail</label>
+                <input type="text" id="mail" name="mail" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <!-- <div class="input-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="text" id="confirm-password" name="confirm-password" required>
+            </div> -->
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script src="./../components/navbar.js"></script>
+</body>
+</html>

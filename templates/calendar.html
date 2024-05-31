@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Calendar</title>
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            padding: 20px;
+        }
+        #filters {
+            margin-right: 20px;
+            width: 200px;
+        }
+        #calendar {
+            max-width: 900px;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="filters">
+        <h3>Filter Options</h3>
+        <h4>Courses</h4>
+        {% for course in courses %}
+        <div>
+            <input type="checkbox" id="course{{ loop.index }}" name="course" value="{{ course[0] }}">
+            <label for="course{{ loop.index }}">{{ course[0] }}</label>
+        </div>
+        {% endfor %}
+        <h4>Time Ranges</h4>
+        <div>
+            <input type="checkbox" id="threeDays" name="timeRange" value="3">
+            <label for="threeDays">From now on three days</label>
+        </div>
+        <div>
+            <input type="checkbox" id="oneWeek" name="timeRange" value="7">
+            <label for="oneWeek">From now on one week</label>
+        </div>
+        <div>
+            <input type="checkbox" id="twoWeeks" name="timeRange" value="14">
+            <label for="twoWeeks">From now on two weeks</label>
+        </div>
+        <div>
+            <input type="checkbox" id="oneMonth" name="timeRange" value="30">
+            <label for="oneMonth">From now on one month</label>
+        </div>
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div id='calendar'></div>
+
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+    <script>
+        //console.log(courses)
+        var events = JSON.parse('{{ tasks_json | safe }}');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            console.log('{{tasks_json}}')
+
+            //events.toArrray();
+            console.log(events)
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: events,
+                eventDidMount: function(info) {
+                    var eventDate = new Date(info.event.start);
+                    var now = new Date();
+                    if (eventDate < now) {
+                        info.el.style.backgroundColor = 'darkgray';
+                        info.el.style.borderColor = 'darkgray';
+                    }
+                }
+            });
+
+            calendar.render();
+
+            window.applyFilters = function() {
+                var selectedCourses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(cb => cb.value);
+                var selectedTimeRanges = Array.from(document.querySelectorAll('input[name="timeRange"]:checked')).map(cb => parseInt(cb.value));
+                
+                var filteredEvents = events.filter(event => {
+                    var includeByCourse = selectedCourses.length === 0 || selectedCourses.includes(event.course);
+                    
+                    var includeByTimeRange = true;
+                    if (selectedTimeRanges.length > 0) {
+                        includeByTimeRange = selectedTimeRanges.some(days => {
+                            var eventDate = new Date(event.start);
+                            var now = new Date();
+                            var timeDiff = eventDate - now;
+                            var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                            return daysDiff <= days;
+                        });
+                    }
+                    
+                    return includeByCourse && includeByTimeRange;
+                });
+                console.log(filteredEvents)
+                calendar.removeAllEvents();
+                calendar.addEventSource(filteredEvents);
+
+
+
+
+            // var calendar = new FullCalendar.Calendar(calendarEl, {
+            //     initialView: 'dayGridMonth',
+            //     headerToolbar: {
+            //         left: 'prev,next today',
+            //         center: 'title',
+            //         right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            //     },
+            //     events: events,
+            //     eventDidMount: function(info) {
+            //         var eventDate = new Date(info.event.start);
+            //         var now = new Date();
+            //         if (eventDate < now) {
+            //             info.el.style.backgroundColor = 'darkgray';
+            //             info.el.style.borderColor = 'darkgray';
+            //         }
+            //     }
+            // });
+
+            // calendar.render();
+
+            // window.applyFilters = function() {
+            //     var selectedCourses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(cb => cb.value);
+            //     var selectedTimeRanges = Array.from(document.querySelectorAll('input[name="timeRange"]:checked')).map(cb => parseInt(cb.value));
+                
+            //     var filteredEvents = events.filter(event => {
+            //         var includeByCourse = selectedCourses.length === 0 || selectedCourses.includes(event.course);
+                    
+            //         var includeByTimeRange = true;
+            //         if (selectedTimeRanges.length > 0) {
+            //             includeByTimeRange = selectedTimeRanges.some(days => {
+            //                 var eventDate = new Date(event.start);
+            //                 var now = new Date();
+            //                 var timeDiff = eventDate - now;
+            //                 var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            //                 return daysDiff <= days;
+            //             });
+            //         }
+                    
+            //         return includeByCourse && includeByTimeRange;
+            //     });
+
+            //     calendar.removeAllEvents();
+            //     console.log(filteredEvents)
+            //     calendar.addEventSource(filteredEvents);
+            };
+        });
+    </script>
+</body>
+</html>

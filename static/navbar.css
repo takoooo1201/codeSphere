@@ -1,0 +1,29 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a2d34;
+    padding: 10px 20px;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+}
+
+.nav-right a {
+    margin-left: 20px;
+}
+
+.navbar a {
+    color: #d1d1d1;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease; /* 添加 transform 到过渡效果中 */
+}
+
+.navbar a:hover {
+    background-color: #41454d;
+    color: white;
+    transform: scale(1.2);
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Posts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='displayPage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Fetch posts from the server
+    fetch('/posts')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                posts = data.posts;
+                renderPosts(posts);
+            } else {
+                console.error('Error fetching posts:', data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+let posts = [];
+
+// Function to render posts
+function renderPosts(filteredPosts) {
+    const postsContainer = document.getElementById('posts-container');
+    postsContainer.innerHTML = '';
+
+    filteredPosts.forEach((post, index) => {
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post';
+        postDiv.dataset.index = index; // Add a custom data attribute to identify posts
+
+        const postTitle = document.createElement('h2');
+        postTitle.className = 'post-title';
+        postTitle.innerText = post.title;
+
+        const postSummary = document.createElement('h3');
+        postSummary.className = 'post-summary';
+        postSummary.innerText = post.content.slice(0, 100) + '...'; // Display a summary of the content
+
+        postDiv.appendChild(postTitle);
+        postDiv.appendChild(postSummary);
+
+        postDiv.addEventListener('click', function() {
+            // Save selected post to localStorage
+            localStorage.setItem('selectedPost', JSON.stringify(post));
+            window.location.href = '{{ url_for('postPage') }}'; // Navigate to postPage
+        });
+
+        postsContainer.appendChild(postDiv);
+    });
+}
+    </script>
+</head>
+<body>
+    <div class="page-content">
+        <h1>All Blog Posts</h1>
+        <input type="text" id="search-bar" placeholder="Search posts..." onkeyup="filterPosts()">
+        <div id="posts-container"></div>
+    </div>
+    <script src="{{ url_for('static', filename='displayPage.js') }}"></script>
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Posts</title>
+    <link rel="stylesheet" href="displayPage.css">
+    <link rel="stylesheet" href="./../components/navbar.css">
+</head>
+<body>
+    <div class="page-content">
+        <h1>All Blog Posts</h1>
+        <input type="text" id="search-bar" placeholder="Search posts..." onkeyup="filterPosts()">
+        <div id="posts-container"></div>
+    </div>
+    <script src="displayPage.js"></script>
+    <script src="./../components/navbar.js"></script>
+</body>
+</html> -->
+

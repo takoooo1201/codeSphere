@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Post</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='postPage.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='navbar.css') }}">
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+    <script>
+        window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
+    </script>
+</head>
+<body>
+    <div class="page-content">
+        <h1 id="post-title"></h1>
+        <h3 id="post-summary"></h3>
+        <div id="post-content"></div>
+        <div>
+            <button id="like-button">Like</button>
+            <span id="like-count">0</span> Likes
+        </div>
+        <div>
+            <h3>Comments:</h3>
+            <div id="comments-container"></div>
+            <textarea id="comment-input" rows="4" placeholder="Add a comment"></textarea>
+            <button id="add-comment-button">Add Comment</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='postPage.js') }}"></script>
+</body>
+</html>
+
+
+
+
