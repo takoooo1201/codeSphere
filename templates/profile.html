@@ -22,23 +22,27 @@
     </div>
     <div class="articles-container">
         <h3>已發布的文章</h3>
+        {% for post in posts %}
         <ul id="articles-list">
-
+            <li><a href="/">{{post[2]}}</a> - {{post[6]}}</li>
         </ul>
+        {% endfor %}
     </div>
     <div class="stats-container">
         <h3>活躍度</h3>
         <table>
             <thead>
                 <tr>
-                    <th>發文數</th>
+                    <th>貼文數</th>
                     <th>按讚數</th>
                     <th>留言數</th>
                 </tr>
             </thead>
             <tbody>
                 <tr id="stats-row">
-                    
+                    <td>{{ posts_amount }}</td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>

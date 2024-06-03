@@ -258,9 +258,10 @@ def profile():
     user = get_user_from_database()
     if user is None:
         return redirect(url_for('entrance'))
-    posts = get_posts_from_database
-    # 渲染模板，傳遞 user 對象
-    return render_template('profile.html', user=user)
+    posts = get_posts_from_database(user['id'])
+    posts_amount = len(posts)
+
+    return render_template('profile.html', user=user, posts=posts, posts_amount=posts_amount)
 
 def get_user_from_database():
     # 假設這裡有一個函數來從資料庫提取數據
@@ -270,6 +271,7 @@ def get_user_from_database():
         cursor.execute('''select * from users where name = ?''', (session['username'],))
         res = cursor.fetchone()
         return {
+            'id': res[0],
             'username': res[1],
             'gender': res[5],
             'birthday': res[4],
@@ -283,7 +285,10 @@ def get_user_from_database():
 def get_posts_from_database(user_id):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('''select * from users where name = ?''', (session['username'],))
+    cursor.execute('''select * from posts where author_id = ?''', (user_id,))
+    posts = cursor.fetchall()
+    print(posts)
+    return posts
 
 if __name__ == '__main__':
     app.run(debug=True)

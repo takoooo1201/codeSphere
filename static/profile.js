@@ -42,17 +42,17 @@ function renderProfile() {
     // info.innerHTML += `<p><strong>自我介紹：</strong>${profile.bio}</p>`;
     // info.innerHTML += `<p><p><strong>個人網站：</strong><a href="${profile.website_href}">${profile.website_name}</a></p></p>`
 
-    stats.innerHTML += `<td>${profile.articles}</td>`;
-    stats.innerHTML += `<td>${profile.likes}</td>`;
-    stats.innerHTML += `<td>${profile.comments}</td>`;
+    // stats.innerHTML += `<td>${profile.articles}</td>`;
+    // stats.innerHTML += `<td>${profile.likes}</td>`;
+    // stats.innerHTML += `<td>${profile.comments}</td>`;
 }
 
 function renderArticlesList() {
-    const articlesList = document.getElementById('articles-list');
-    for (let i = 0; i < articles.length; i++) {
-        articleContent = `<li><a href="${articles[i].href}">${articles[i].title}</a> - ${articles[i].time}</li>`
-        articlesList.innerHTML += articleContent;
-    }
+    // const articlesList = document.getElementById('articles-list');
+    // for (let i = 0; i < articles.length; i++) {
+    //     articleContent = `<li><a href="${articles[i].href}">${articles[i].title}</a> - ${articles[i].time}</li>`
+    //     articlesList.innerHTML += articleContent;
+    // }
 }
 
 renderProfile();
