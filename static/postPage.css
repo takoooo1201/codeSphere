@@ -1,4 +1,36 @@
-body {
+.post-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.comment {
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+#like-button {
+    background-color: lightgray;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#like-button.liked {
+    background-color: darkgray;
+}
+
+#comment-input {
+    width: calc(100% - 120px);
+    padding: 10px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px;
+    cursor: pointer;
+}
+/* body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -24,4 +56,4 @@ textarea {
 
 #comments-container {
     margin-bottom: 20px;
-}
+} */

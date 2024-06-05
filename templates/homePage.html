@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CodeConnect - Home</title>
-    <link rel="stylesheet" href="homePage.css">
-    <link rel="stylesheet" href="./../components/navbar.css">
-    <script src="./../components/navbar.js"></script>
-    <script src="homePage.js" defer></script>
+    <title>codeSphere - Home</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='homePage.css') }}">
+
+    <!-- <link rel="stylesheet" href="./../components/navbar.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+    <!-- <script src="./../components/navbar.js"></script> -->
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+
+    <!-- <script src="homePage.js" defer></script> -->
+    <script src="{{ url_for('static', filename='homePage.js') }}"></script>
+
+    <script>
+        // Define global variable to pass 'username' from Flask session to external JS
+        window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
+    </script>
+    
 </head>
 <body>
     <header>

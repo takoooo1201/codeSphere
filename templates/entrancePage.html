@@ -38,7 +38,7 @@ enter your account and password to log in
     <!-- <script src="entrancePage.js"></script> -->
     <!-- <script src="{{ url_for('static', filename='entrancePage.js') }}"></script> -->
     <script>
-        const terminalContent = document.getElementById('terminal-content');
+const terminalContent = document.getElementById('terminal-content');
 const terminalInput = document.getElementById('terminal-input');
 const prompt = document.getElementById('prompt');
 
@@ -54,9 +54,9 @@ function processCommand(command) {
     terminalContent.textContent += '\n' + prompt.textContent + command;
 
     if (command === 'guest') {
-        window.location.href = '{{ url_for('test') }}';//'homePage.html'
+        window.location.href = '{{ url_for('home') }}';//'homePage.html'
     } else if (command === 'new') {
-        window.location.href = 'registerPage.html';
+        window.location.href = '{{ url_for('register') }}';
     } else {
         fetch('/login', {
             method: 'POST',
@@ -89,7 +89,7 @@ function handlePasswordInput( mypassword,event) {
     if (event.key === 'Enter') {
         const password = terminalInput.value.trim();
         if (password === mypassword) {
-            window.location.href = '{{ url_for('test') }}';
+            window.location.href = '{{ url_for('home') }}';
         } else {
             terminalContent.textContent += '\n' + 'Invalid username or password';
             prompt.textContent = 'CodeSphere@entrance:~$ ';

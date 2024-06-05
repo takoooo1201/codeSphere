@@ -35,6 +35,8 @@ pre {
 .input-line {
     display: flex;
     margin-top: 8px;
+    /* align-items: center; */
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 #prompt {
@@ -43,10 +45,19 @@ pre {
 }
 
 #terminal-input {
-    width: 100%;
+    /* width: 100%; */
     border: none;
     background: none;
     color: #fff;
     outline: none;
     font-size: 1em;
+    /* flex-grow: 1;  */
+    flex-grow: 1; /* Allows the input to expand and take available space */
+    min-width: 0; /* Prevents the input from having a default width */
 }
+
+
+
+
+
+

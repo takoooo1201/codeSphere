@@ -4,7 +4,7 @@ function createNavbar(username) {
             <div class="nav-left">
                 <a href="./../home/homePage.html">CodeSphere</a>
                 <a href="./../profile-detailed/profile.html">Profile</a>
-                <a href="./../display-post/displayPage.html">Posts</a>
+                <a href="/display">Posts</a>
                 <a href="./../forum/forum.html">Forum</a>
             </div>
             <div class="nav-right">
@@ -15,6 +15,7 @@ function createNavbar(username) {
         </nav>
     `;
 
+//${username}
     // 选择一个元素来插入导航栏
     const headerElement = document.querySelector('body');
     headerElement.insertAdjacentHTML('beforebegin', navbarHtml);

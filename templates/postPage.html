@@ -2,6 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Post Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='postPage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+    <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+    <script>
+        window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+
+            fetch(`/post/${postId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        renderPost(data.post, postId);
+                    } else {
+                        console.error('Error fetching post:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function renderPost(post, postId) {
+            document.getElementById('post-title').innerText = post.title;
+            document.getElementById('post-author').innerText = 'Author: ' + post.author;
+            document.getElementById('post-created-at').innerText = 'Created at: ' + post.created_at;
+            document.getElementById('post-content').innerText = post.content;
+            document.getElementById('post-likes').innerText = 'Likes: ' + post.likes;
+
+            const commentsContainer = document.getElementById('post-comments');
+            commentsContainer.innerHTML = '';
+
+            post.comments.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+
+                const commentAuthor = document.createElement('p');
+                commentAuthor.className = 'comment-author';
+                commentAuthor.innerText = 'Comment by: ' + comment.author;
+
+                const commentCreatedAt = document.createElement('p');
+                commentCreatedAt.className = 'comment-created-at';
+                commentCreatedAt.innerText = 'Created at: ' + comment.created_at;
+
+                const commentContent = document.createElement('p');
+                commentContent.className = 'comment-content';
+                commentContent.innerText = comment.content;
+
+                commentDiv.appendChild(commentAuthor);
+                commentDiv.appendChild(commentCreatedAt);
+                commentDiv.appendChild(commentContent);
+
+                commentsContainer.appendChild(commentDiv);
+            });
+
+            // Attach the postId to the like button and comment submission button
+            document.getElementById('like-button').onclick = () => toggleLike(postId);
+            document.getElementById('submit-comment').onclick = () => addComment(postId);
+        }
+
+        function toggleLike(postId) {
+            fetch('/like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post_id: postId, usrname:window.username})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const likeButton = document.getElementById('like-button');
+                    likeButton.classList.toggle('liked');
+                    const likeCount = document.getElementById('post-likes');
+                    const currentLikes = parseInt(likeCount.innerText.split(' ')[1]);
+                    likeCount.innerText = 'Likes: ' + (likeButton.classList.contains('liked') ? currentLikes + 1 : currentLikes - 1);
+                } else {
+                    console.error('Error liking post:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function addComment(postId) {
+            const commentInput = document.getElementById('comment-input').value;
+
+            fetch('/comment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post_id: postId, content: commentInput , usrname:window.username})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.reload();
+                } else {
+                    console.error('Error adding comment:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+    <style>
+        .liked {
+            background-color: darkgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="post-content">
+        <h1 id="post-title"></h1>
+        <p id="post-author"></p>
+        <p id="post-created-at"></p>
+        <p id="post-content"></p>
+        <div>
+            <button id="like-button">Like</button>
+            <span id="post-likes"></span>
+        </div>
+        <h2>Comments</h2>
+        <div id="post-comments"></div>
+        <div>
+            <input type="text" id="comment-input" placeholder="Add a comment">
+            <button id="submit-comment">Submit</button>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>Blog Post</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='postPage.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='navbar.css') }}">
@@ -9,6 +146,7 @@
     <script>
         window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
     </script>
+    <script src="{{ url_for('static', filename='postPage.js') }}"></script>
 </head>
 <body>
     <div class="page-content">
@@ -26,10 +164,10 @@
             <button id="add-comment-button">Add Comment</button>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='postPage.js') }}"></script>
+    
 </body>
 </html>
 
 
 
-
+ -->

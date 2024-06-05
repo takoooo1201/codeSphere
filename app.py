@@ -5,12 +5,12 @@ from scraper import get_data
 from flask import Flask, request, render_template_string, send_from_directory
 import subprocess
 import os
+from datetime import datetime
 
 from flask import jsonify
 from captcha.image import ImageCaptcha
 import random
 import string
-
 
 # @app.route('/')
 # def index():
@@ -32,27 +32,18 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-def init_db():
-    with app.app_context():
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS tasks (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT,
-                            course TEXT,
-                            deadline TEXT)''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS courses (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT)''')
-        db.commit()
-
-#@app.before_first_request
-def initialize():
-    init_db()
 
 @app.route('/entrance')
 def entrance():
     return render_template('entrancePage.html')
+
+@app.route('/register')
+def register():
+    return render_template('registerPage.html')
+
+@app.route('/home')
+def home():
+    return render_template('homePage.html')
 
 @app.route('/postPage')
 def postPage():
@@ -69,6 +60,43 @@ def test():
 def display():
     #get_posts()
     return render_template('displayPage.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data['username']
+    password = data.get('password', None)
+
+    conn = get_db()
+    # user = conn.execute('SELECT * FROM users WHERE name = ? AND password = ?', (username, password)).fetchone()
+    user = conn.execute('SELECT * FROM users WHERE name = ? ', (username,)).fetchone()
+    mypassword=user[2]
+    #print(mypassword)
+    conn.close()
+    if user is None:
+        return jsonify({'status': 'error', 'message': 'Invalid username or password'})
+
+    session['username'] = username
+    return jsonify({'status': 'success','password':mypassword})
+
+@app.route('/register_user', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT MAX(user_id) FROM users')
+    max_id = cursor.fetchone()[0]
+    new_id = 0 if max_id is None else max_id + 1
+
+    cursor.execute('INSERT INTO users (user_id, name, password) VALUES (?, ?, ?)', (new_id, username, password))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success', 'user_id': new_id})
     
 
 @app.route('/posts', methods=['GET'])
@@ -81,8 +109,87 @@ def get_posts():
 
     return jsonify({'status': 'success', 'posts': post_list})
 
+
 @app.route('/post/<int:post_id>', methods=['GET'])
 def get_post(post_id):
+    conn = get_db()
+    post = conn.execute('SELECT p.title, u.name, p.created_at, p.content, '
+                        '(SELECT COUNT(*) FROM likesForPost WHERE post_id = p.post_id) as likes '
+                        'FROM posts p JOIN users u ON p.author_id = u.user_id '
+                        'WHERE p.post_id = ? AND p.visible = 1 AND p.deleted = 0', (post_id,)).fetchone()
+    
+    comments = conn.execute('SELECT c.content, u.name, c.created_at '
+                            'FROM comments c JOIN users u ON c.author_id = u.user_id '
+                            'WHERE c.post_id = ? AND c.deleted = 0', (post_id,)).fetchall()
+    conn.close()
+
+    if post is None:
+        return jsonify({'status': 'error', 'message': 'Post not found'})
+
+    post_details = {
+        'title': post[0],
+        'author': post[1],
+        'created_at': post[2],
+        'content': post[3],
+        'likes': post[4],
+        'comments': [{'content': comment[0], 'author': comment[1], 'created_at': comment[2]} for comment in comments]
+    }
+    
+    return jsonify({'status': 'success', 'post': post_details})
+
+@app.route('/like', methods=['POST'])
+def like_post():
+    data = request.get_json()
+    post_id = data['post_id']
+    usrname = data['usrname']
+    conn = get_db()
+    cursor = conn.cursor()
+    user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
+
+
+    if not user_id:
+        return jsonify({'status': 'error', 'message': 'User not logged in'})
+
+    
+    
+    # Check if user already liked the post
+    liked = cursor.execute('SELECT * FROM likesForPost WHERE post_id = ? AND user_id = ?', (post_id, user_id)).fetchone()
+    
+    if liked:
+        cursor.execute('DELETE FROM likesForPost WHERE post_id = ? AND user_id = ?', (post_id, user_id))
+    else:
+        cursor.execute('INSERT INTO likesForPost (post_id, user_id) VALUES (?, ?)', (post_id, user_id))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
+
+@app.route('/comment', methods=['POST'])
+def add_comment():
+    data = request.get_json()
+    post_id = data['post_id']
+    content = data['content']
+    usrname = data['usrname']
+    conn = get_db()
+    cursor = conn.cursor()
+    user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
+    if not user_id:
+        return jsonify({'status': 'error', 'message': 'User not logged in'})
+
+
+    
+    cursor.execute('INSERT INTO comments (author_id, post_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+                   (user_id, post_id, content, datetime.now().isoformat(), datetime.now().isoformat()))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
+
+
+@app.route('/postsss/<int:post_id>', methods=['GET'])
+def getsss_post(post_id):
     conn = get_db()
     post = conn.execute('SELECT * FROM posts WHERE post_id = ?', (post_id,)).fetchone()
     comments = conn.execute('SELECT * FROM comments WHERE post_id = ? AND deleted = 0', (post_id,)).fetchall()
@@ -104,8 +211,8 @@ def get_post(post_id):
 
     return jsonify({'status': 'success', 'post': post_data, 'comments': comments_data})
 
-@app.route('/like/<int:post_id>', methods=['POST'])
-def like_post(post_id):
+@app.route('/likesss/<int:post_id>', methods=['POST'])
+def likesss_post(post_id):
     user_id = session.get('user_id')
     if user_id is None:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
@@ -117,8 +224,8 @@ def like_post(post_id):
 
     return jsonify({'status': 'success', 'message': 'Post liked'})
 
-@app.route('/comment/<int:post_id>', methods=['POST'])
-def add_comment(post_id):
+@app.route('/commentsss/<int:post_id>', methods=['POST'])
+def add_commentsss(post_id):
     data = request.get_json()
     comment_text = data['comment']
     user_id = session.get('user_id')
@@ -134,26 +241,6 @@ def add_comment(post_id):
     conn.close()
 
     return jsonify({'status': 'success', 'message': 'Comment added'})
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data['username']
-    password = data.get('password', None)
-
-    conn = get_db()
-    # user = conn.execute('SELECT * FROM users WHERE name = ? AND password = ?', (username, password)).fetchone()
-    user = conn.execute('SELECT * FROM users WHERE name = ? ', (username,)).fetchone()
-    mypassword=user[2]
-    print(mypassword)
-    conn.close()
-
-    if user is None:
-        return jsonify({'status': 'error', 'message': 'Invalid username or password'})
-
-    session['username'] = username
-    return jsonify({'status': 'success','password':mypassword})
 
 
 @app.route('/yt')
@@ -292,3 +379,25 @@ def get_posts_from_database(user_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# def init_db():
+#     with app.app_context():
+#         db = get_db()
+#         cursor = db.cursor()
+#         cursor.execute('''CREATE TABLE IF NOT EXISTS tasks (
+#                             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                             name TEXT,
+#                             course TEXT,
+#                             deadline TEXT)''')
+#         cursor.execute('''CREATE TABLE IF NOT EXISTS courses (
+#                             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#                             name TEXT)''')
+#         db.commit()
+
+# #@app.before_first_request
+# def initialize():
+#     init_db()
+
+
+    
