@@ -2,10 +2,9 @@ function createNavbar(username) {
     const navbarHtml = `
         <nav class="navbar">
             <div class="nav-left">
-                <a href="./../home/homePage.html">CodeSphere</a>
-                <a href="./../profile-detailed/profile.html">Profile</a>
+                <a href="/home">CodeSphere</a>
                 <a href="/display">Posts</a>
-                <a href="./../forum/forum.html">Forum</a>
+                <a href="/forum">Forum</a>
             </div>
             <div class="nav-right">
                 <a href="/profile">${username}</a>
