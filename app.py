@@ -245,6 +245,9 @@ def add_commentsss(post_id):
 
     return jsonify({'status': 'success', 'message': 'Comment added'})
 
+@app.route('/forum')
+def forum():
+    return render_template('forum.html')
 
 @app.route('/yt')
 def yt():
