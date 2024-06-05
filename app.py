@@ -350,8 +350,18 @@ def profile():
         return redirect(url_for('entrance'))
     posts = get_posts_from_database(user['id'])
     posts_amount = len(posts)
+    comments = get_comments_from_database(user['id'])
+    comments_amount = len(comments)
+    likes = get_likes_from_database(user['id'])
+    likes_amount = len(likes)
 
-    return render_template('profile.html', user=user, posts=posts, posts_amount=posts_amount)
+    return render_template('profile.html',
+                           user=user,
+                           posts=posts,
+                           posts_amount=posts_amount,
+                           comments_amount=comments_amount,
+                           likes_amount = likes_amount
+                           )
 
 def get_user_from_database():
     # 假設這裡有一個函數來從資料庫提取數據
@@ -377,8 +387,21 @@ def get_posts_from_database(user_id):
     cursor = conn.cursor()
     cursor.execute('''select * from posts where author_id = ?''', (user_id,))
     posts = cursor.fetchall()
-    print(posts)
     return posts
+
+def get_comments_from_database(user_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''select * from comments where author_id = ?''', (user_id,))
+    comments = cursor.fetchall()
+    return comments
+
+def get_likes_from_database(user_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''select * from likesForPost where user_id = ?''', (user_id,))
+    likes = cursor.fetchall()
+    return likes
 
 if __name__ == '__main__':
     app.run(debug=True)
