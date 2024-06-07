@@ -47,6 +47,23 @@
             </tbody>
         </table>
     </div>
+    <div class="profile-container">
+        <form action="/update_profile" method="POST">
+            <label for="birthday">生日:</label>
+            <input type="date" id="birthday" name="birthday" value=""><br><br>
+        
+            <label for="bio">自我介紹:</label>
+            <textarea id="bio" name="bio"></textarea><br><br>
+
+            <label for="intro">個人網站名稱:</label>
+            <textarea id="intro" name="intro"></textarea><br><br>
+
+            <label for="website_href">個人網站連結:</label>
+            <textarea id="website_href" name="website_href"></textarea><br><br>
+        
+            <button type="submit">更新資料</button>
+        </form>    
+    </div>
     <script src="{{ url_for('static', filename='profile.js') }}"></script>
     <script src="{{ url_for('static', filename='navbar.js') }}"></script>
     <script>
