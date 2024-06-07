@@ -444,6 +444,27 @@ def profile():
                            likes_amount = likes_amount
                            )
 
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    birthday = request.form['birthday']
+    bio = request.form['bio']
+    website = request.form['website_href']
+
+    # 假設有一個函數 update_user_profile 來處理資料庫更新
+    update_user_profile(birthday, bio, website)
+
+    return redirect(url_for('profile'))  # 重定向回個人頁面
+
+def update_user_profile(birthday, bio, website):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE users SET birth = ?, intro = ?, website_href = ?
+        WHERE name = ?""",
+        (birthday, bio, website, session['username']))  # 假設用戶ID存儲在session中
+    conn.commit()
+    conn.close()
+
 def get_user_from_database():
     # 假設這裡有一個函數來從資料庫提取數據
     conn = get_db()
