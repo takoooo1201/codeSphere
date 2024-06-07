@@ -297,17 +297,30 @@ def add_discussion():
     data = request.form
     conn = get_db()
     cursor = conn.cursor()
-    user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (session['username'],)).fetchone()[0]
-    cursor.execute('''INSERT INTO discussions (author_id,title,content,created_at,updated_at) VALUES (?,?,?,?,?)''',
-                   (
-                       user_id,
-                       data['title'],
-                       data['content'],
-                       datetime.now().isoformat(),
-                       datetime.now().isoformat()
-                       )
-                    )
-    conn.commit()
+    if 'username' in session:
+        user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (session['username'],)).fetchone()[0]
+        cursor.execute('''INSERT INTO discussions (author_id,title,content,created_at,updated_at) VALUES (?,?,?,?,?)''',
+                    (
+                        user_id,
+                        data['title'],
+                        data['content'],
+                        datetime.now().isoformat(),
+                        datetime.now().isoformat()
+                        )
+                        )
+        conn.commit()
+    else:
+        print('go')
+        cursor.execute('''INSERT INTO discussions (author_id,title,content,created_at,updated_at) VALUES (?,?,?,?,?)''',
+            (
+                -1,
+                data['title'],
+                data['content'],
+                datetime.now().isoformat(),
+                datetime.now().isoformat()
+                )
+                )
+        conn.commit()
     # return jsonify({'message': 'Discussion created successfully!'}), 201
     return redirect('forum')
 

@@ -13,7 +13,7 @@ function createNavbar(username) {
             <div class="nav-right">
                 <a href="/profile">訪客</a>
                 <a href="/entrance">Login</a>
-                <a href="/navbar">Register</a>
+                <a href="/register">Register</a>
             </div>
         </nav>
         `;
