@@ -76,6 +76,12 @@ def login():
     session['username'] = username
     return jsonify({'status': 'success','password':mypassword})
 
+@app.route('/logout')
+def user_logout():
+    session.pop('username', None)  # 刪除特定 session 鍵
+    # 或者 session.clear()  # 清除所有 session 數據
+    return redirect(url_for('entrance'))  # 重定向到登入頁面
+
 @app.route('/register_user', methods=['POST'])
 def register_user():
     data = request.get_json()
@@ -479,6 +485,6 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(port=6010)
+    app.run(debug=True)
+    # app.run(port=6010)
     
