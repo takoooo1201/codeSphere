@@ -245,9 +245,42 @@ def add_commentsss(post_id):
 
     return jsonify({'status': 'success', 'message': 'Comment added'})
 
-@app.route('/forum')
+@app.route('/forum', methods=['GET'])
 def forum():
-    return render_template('forum.html')
+    discussions = get_discussion()
+    return render_template('forum.html', discussions=discussions)
+
+@app.route('/forum', methods=['POST'])
+def add_discussion():
+    data = request.form
+    conn = get_db()
+    cursor = conn.cursor()
+    user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (session['username'],)).fetchone()[0]
+    cursor.execute('''INSERT INTO discussions (author_id,title,content,created_at,updated_at) VALUES (?,?,?,?,?)''',
+                   (
+                       user_id,
+                       data['title'],
+                       data['content'],
+                       datetime.now().isoformat(),
+                       datetime.now().isoformat()
+                       )
+                    )
+    conn.commit()
+    # return jsonify({'message': 'Discussion created successfully!'}), 201
+    return redirect('forum')
+
+def get_discussion():
+    conn = get_db()
+    cursor = conn.cursor()
+    # 將 username 加入查詢結果
+    query = """
+    SELECT d.*, u.name
+    FROM discussions d
+    JOIN users u ON d.author_id = u.user_id
+    WHERE d.deleted = 0
+    """
+    discussions = cursor.execute(query).fetchall()
+    return discussions
 
 @app.route('/yt')
 def yt():
@@ -407,7 +440,8 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(port=6010)
 
 
 # def init_db():
