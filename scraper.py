@@ -30,7 +30,7 @@ def get_data(username, password):
         # Click login button
         in_button = driver.find_element(By.CLASS_NAME, 'btn-primary')
         in_button.click()
-        time.sleep(5)
+        time.sleep(3)
 
         # Click the element in recent apps
         element_to_click = WebDriverWait(driver, 10).until(

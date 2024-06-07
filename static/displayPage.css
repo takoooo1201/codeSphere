@@ -41,6 +41,22 @@ h1 {
     color: #333;
 }
 
+.create-post-button {
+    display: inline-block;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.create-post-button:hover {
+    background-color: #0056b3;
+}
+
 #search-bar {
     width: 90%;
     padding: 10px;
