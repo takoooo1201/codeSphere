@@ -16,7 +16,7 @@
             <h2>姓名：{{ user.username }}</h2>
             <p><strong>性別：</strong>{{ user.gender }}</p>
             <p><strong>生日：</strong>{{ user.birthday }}</p>
-            <p><strong>自我介紹：</strong>{{ user.bio}}</p>
+            <p><strong>自我介紹：</strong>{{ user.bio }}</p>
             <p><p><strong>個人網站：</strong><a href="{{ user.website_href }}">{{ user.website_name }}</a></p></p>
         </div>
     </div>
@@ -52,6 +52,12 @@
             <label for="birthday">生日:</label>
             <input type="date" id="birthday" name="birthday" value=""><br><br>
         
+            <label for="gender">性別:</label>
+            <select id="gender" name="gender">
+                <option value="boy" selected>男</option>
+                <option value="girl">女</option>
+            </select><br><br>
+
             <label for="bio">自我介紹:</label>
             <textarea id="bio" name="bio"></textarea><br><br>
 

@@ -456,22 +456,21 @@ def update_profile():
 def update_user_profile(birthday, bio, website):
     conn = get_db()
     cursor = conn.cursor()
-    if birthday:
+    print(birthday, bio, website)
+    if birthday != '':
         cursor.execute("""
             UPDATE users SET birth = ?
             WHERE name = ?""",
         (birthday, session['username']))  # 假設用戶ID存儲在session中
         conn.commit()
-    if bio:
+    if bio != '':
         cursor.execute("""
-            UPDATE users SET intro = ?,
-            WHERE name = ?""",
+            UPDATE users SET intro = ? WHERE name = ?""",
         (bio, session['username']))  # 假設用戶ID存儲在session中
         conn.commit()
-    if website:
+    if website != '':
         cursor.execute("""
-            UPDATE users SET website_href = ?
-            WHERE name = ?""",
+            UPDATE users SET web_link = ? WHERE name = ?""",
         (website, session['username']))  # 假設用戶ID存儲在session中
         conn.commit()
     conn.close()
@@ -486,11 +485,11 @@ def get_user_from_database():
         return {
             'id': res[0],
             'username': res[1],
-            'gender': res[5],
+            'gender': res[6],
             'birthday': res[4],
-            'bio': '一個熱愛技術的開發者',
+            'bio': res[7],
             'website_href': 'http://example.com',
-            'website_name': 'example.com'
+            'website_name': '個人網站'
         }
     else:
         return None
@@ -517,6 +516,6 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(port=6010)
+    app.run(debug=True)
+    # app.run(port=6010)
     
