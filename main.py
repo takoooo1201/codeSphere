@@ -150,7 +150,7 @@ def like_post():
     user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
 
 
-    if not user_id:
+    if user_id is None:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
 
     
@@ -177,7 +177,7 @@ def add_comment():
     conn = get_db()
     cursor = conn.cursor()
     user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
-    if not user_id:
+    if user_id is None:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
 
 
@@ -198,7 +198,7 @@ def add_post():
     content = data['content']
     user_id = session.get('user_id')
 
-    if not user_id:
+    if user_id is None:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
 
     conn = get_db()
@@ -221,7 +221,7 @@ def create_post():
     conn = get_db()
     cursor = conn.cursor()
     user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
-    if not user_id:
+    if user_id is None:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
     
     cursor.execute('INSERT INTO posts (author_id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
