@@ -506,6 +506,6 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # app.run(port=6010)
+    # app.run(debug=True)
+    app.run(port=6010)
     
