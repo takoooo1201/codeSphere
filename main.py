@@ -494,7 +494,7 @@ def get_user_from_database():
             'gender': res[6],
             'birthday': res[4],
             'bio': res[7],
-            'website_href': 'http://example.com',
+            'website_href': res[8],
             'website_name': '個人網站'
         }
     else:
@@ -522,6 +522,6 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # app.run(port=6010)
+    # app.run(debug=True)
+    app.run(port=6010)
     
