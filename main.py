@@ -444,19 +444,25 @@ def profile():
 
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
+    gender = request.form['gender']
     birthday = request.form['birthday']
     bio = request.form['bio']
     website = request.form['website_href']
 
     # 假設有一個函數 update_user_profile 來處理資料庫更新
-    update_user_profile(birthday, bio, website)
+    update_user_profile(gender, birthday, bio, website)
 
     return redirect(url_for('profile'))  # 重定向回個人頁面
 
-def update_user_profile(birthday, bio, website):
+def update_user_profile(gender, birthday, bio, website):
     conn = get_db()
     cursor = conn.cursor()
-    print(birthday, bio, website)
+    if gender != '':
+        cursor.execute("""
+            UPDATE users SET gender = ?
+            WHERE name = ?""",
+        (gender, session['username']))  # 假設用戶ID存儲在session中
+        conn.commit()
     if birthday != '':
         cursor.execute("""
             UPDATE users SET birth = ?
