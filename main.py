@@ -223,8 +223,6 @@ def create_post():
     user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
     if not user_id:
         return jsonify({'status': 'error', 'message': 'User not logged in'})
-
-
     
     cursor.execute('INSERT INTO posts (author_id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
                    (user_id, title, content, datetime.now().isoformat(), datetime.now().isoformat()))
@@ -458,11 +456,24 @@ def update_profile():
 def update_user_profile(birthday, bio, website):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE users SET birth = ?, intro = ?, website_href = ?
-        WHERE name = ?""",
-        (birthday, bio, website, session['username']))  # 假設用戶ID存儲在session中
-    conn.commit()
+    if birthday:
+        cursor.execute("""
+            UPDATE users SET birth = ?
+            WHERE name = ?""",
+        (birthday, session['username']))  # 假設用戶ID存儲在session中
+        conn.commit()
+    if bio:
+        cursor.execute("""
+            UPDATE users SET intro = ?,
+            WHERE name = ?""",
+        (bio, session['username']))  # 假設用戶ID存儲在session中
+        conn.commit()
+    if website:
+        cursor.execute("""
+            UPDATE users SET website_href = ?
+            WHERE name = ?""",
+        (website, session['username']))  # 假設用戶ID存儲在session中
+        conn.commit()
     conn.close()
 
 def get_user_from_database():

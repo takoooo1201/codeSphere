@@ -1,5 +1,5 @@
 function createNavbar(username) {
-    navbar = ''
+    navbarHtml = ''
     if (username == 'Guest') {
         navbarHtml = `
         <nav class="navbar">
