@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='postPage.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
     <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+    <!-- Use a reliable CDN for Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         window.username = "{{ session['username'] if 'username' in session else 'Guest' }}";
     </script>
@@ -30,7 +32,7 @@
             document.getElementById('post-title').innerText = post.title;
             document.getElementById('post-author').innerText = 'Author: ' + post.author;
             document.getElementById('post-created-at').innerText = 'Created at: ' + post.created_at;
-            document.getElementById('post-content').innerText = post.content;
+            document.getElementById('post-content').innerHTML = marked.parse(post.content); // Use marked.parse() for newer versions
             document.getElementById('post-likes').innerText = 'Likes: ' + post.likes;
 
             const commentsContainer = document.getElementById('post-comments');
@@ -59,7 +61,6 @@
                 commentsContainer.appendChild(commentDiv);
             });
 
-            // Attach the postId to the like button and comment submission button
             document.getElementById('like-button').onclick = () => toggleLike(postId);
             document.getElementById('submit-comment').onclick = () => addComment(postId);
         }
@@ -70,7 +71,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ post_id: postId, usrname:window.username})
+                body: JSON.stringify({ post_id: postId, usrname: window.username })
             })
             .then(response => response.json())
             .then(data => {
@@ -95,7 +96,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ post_id: postId, content: commentInput , usrname:window.username})
+                body: JSON.stringify({ post_id: postId, content: commentInput, usrname: window.username })
             })
             .then(response => response.json())
             .then(data => {
@@ -119,20 +120,24 @@
         <h1 id="post-title"></h1>
         <p id="post-author"></p>
         <p id="post-created-at"></p>
-        <p id="post-content"></p>
+        <div id="post-content"></div>
         <div>
             <button id="like-button">Like</button>
             <span id="post-likes"></span>
         </div>
         <h2>Comments</h2>
         <div id="post-comments"></div>
-        <div>
+        <div class="comment-form">
             <input type="text" id="comment-input" placeholder="Add a comment">
             <button id="submit-comment">Submit</button>
         </div>
     </div>
 </body>
 </html>
+
+
+
+
 
 
 <!-- <!DOCTYPE html>
