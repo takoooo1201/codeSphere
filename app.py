@@ -64,6 +64,10 @@ def display():
     #get_posts()
     return render_template('displayPage.html')
 
+@app.route('/createPage')
+def createPage():
+    return render_template('createPage.html')
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -191,6 +195,50 @@ def add_comment():
     return jsonify({'status': 'success'})
 
 
+@app.route('/add_post', methods=['POST'])
+def add_post():
+    data = request.get_json()
+    title = data['title']
+    content = data['content']
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'status': 'error', 'message': 'User not logged in'})
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT INTO posts (author_id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+                   (user_id, title, content, datetime.now().isoformat(), datetime.now().isoformat()))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
+
+@app.route('/create_post', methods=['POST'])
+def create_post():
+    data = request.get_json()
+    title = data['title']
+    content = data['content']
+    usrname = data['usrname']
+    conn = get_db()
+    cursor = conn.cursor()
+    user_id = cursor.execute('SELECT user_id FROM users WHERE name = ?', (usrname,)).fetchone()[0]
+    if not user_id:
+        return jsonify({'status': 'error', 'message': 'User not logged in'})
+
+
+    
+    cursor.execute('INSERT INTO posts (author_id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+                   (user_id, title, content, datetime.now().isoformat(), datetime.now().isoformat()))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
+
+
 @app.route('/postsss/<int:post_id>', methods=['GET'])
 def getsss_post(post_id):
     conn = get_db()
@@ -290,11 +338,12 @@ def yt():
 @app.route('/calendar')
 def calendar():
     if 'username' in session:
+        print(session['username'])
         db = get_db()
         cursor = db.cursor()
-        cursor.execute('SELECT * FROM tasks')
+        cursor.execute('SELECT * FROM tasks WHERE name = ?',(session['username'],))
         tasks = cursor.fetchall()
-        cursor.execute('SELECT * FROM courses')
+        cursor.execute('SELECT * FROM courses WHERE name = ?',(session['username'],))
         courses = cursor.fetchall()
         print(courses)
         tasks_json = json.dumps([
@@ -312,21 +361,21 @@ def eeclasslogin():
         password = request.form['password']
         session['username'] = username
         session['password'] = password
-        initialize()
+        #initialize()
         tasks, courses = get_data(username, password)
         db = get_db()
         cursor = db.cursor()
 
         for course in courses:
-            cursor.execute('SELECT * FROM courses WHERE name = ?', (course,))
+            cursor.execute('SELECT * FROM courses WHERE course = ? AND name = ?', (course,username))
             if cursor.fetchone() is None:
-                cursor.execute('INSERT INTO courses (name) VALUES (?)', (course,))
+                cursor.execute('INSERT INTO courses (course,name) VALUES (?,?)', (course,username))
 
         for task in tasks:
-            cursor.execute('SELECT * FROM tasks WHERE name = ?', (task['title'],))
+            cursor.execute('SELECT * FROM tasks WHERE task = ? AND name = ?', (task['title'],username))
             if cursor.fetchone() is None:
-                cursor.execute('INSERT INTO tasks (name, course, deadline) VALUES (?, ?, ?)', 
-                               (task['title'], task['source'], task['deadline']))
+                cursor.execute('INSERT INTO tasks (task, course, deadline,name) VALUES (?, ?, ?,?)', 
+                               (task['title'], task['source'], task['deadline'],username))
         
         db.commit()
         return redirect(url_for('calendar'))
@@ -343,7 +392,7 @@ def download():
     link = request.form['link']
     path = request.form['path']
     format = request.form['format']
-    path = r'C:\Users\whsun\Desktop\\'
+    #path = r'C:\Users\whsun\Desktop\\'
     if format == 'mp3':
         format_option = 'bestaudio/best'
         ext = 'mp3'
@@ -374,7 +423,7 @@ def download():
 
         filename = files[0]  # Taking the first file that matches the extension
         #return send_from_directory(directory=path, filename=filename, as_attachment=True)\
-        return "good"
+        return "download successfully"
     except Exception as e:
         return f"An error occurred: {str(e)}"
 

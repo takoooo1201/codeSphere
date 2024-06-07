@@ -3,6 +3,10 @@ function createNavbar(username) {
         <nav class="navbar">
             <div class="nav-left">
                 <a href="/home">CodeSphere</a>
+<<<<<<< Updated upstream
+=======
+                <a href="./../profile-detailed/profile.html">Profile</a>
+>>>>>>> Stashed changes
                 <a href="/display">Posts</a>
                 <a href="/forum">Forum</a>
             </div>
