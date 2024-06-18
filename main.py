@@ -328,11 +328,21 @@ def get_discussion():
     conn = get_db()
     cursor = conn.cursor()
     # 將 username 加入查詢結果
+    # query = """
+    # SELECT d.*, u.name
+    # FROM discussions d
+    # JOIN users u ON d.author_id = u.user_id
+    # WHERE d.deleted = 0
+    # """
     query = """
     SELECT d.*, u.name
     FROM discussions d
     JOIN users u ON d.author_id = u.user_id
-    WHERE d.deleted = 0
+    WHERE d.deleted = 0 and d.author_id != -1
+    UNION
+    SELECT d.*, 'guest (not logged in)'
+    FROM discussions d
+    WHERE d.deleted = 0 and d.author_id = -1
     """
     discussions = cursor.execute(query).fetchall()
     return discussions
@@ -535,6 +545,6 @@ def get_likes_from_database(user_id):
     return likes
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(port=6010)
+    app.run(debug=True)
+    # app.run(port=6010)
     
