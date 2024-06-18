@@ -70,7 +70,8 @@ function processCommand(command) {
             if (data.status === 'success') {
                 prompt.textContent = 'CodeSphere@' + command + ':~$ ';
                 p=data.password
-                console.log(p)
+                // console.log(p)
+                terminalInput.type = 'password'
                 terminalInput.onkeypress = handlePasswordInput.bind(null,p);//
             } else {
                 terminalContent.textContent += '\n' + data.message;
@@ -85,7 +86,7 @@ function processCommand(command) {
 }
 
 function handlePasswordInput( mypassword,event) {
-    console.log(mypassword)
+    // console.log(mypassword)
     if (event.key === 'Enter') {
         const password = terminalInput.value.trim();
         if (password === mypassword) {
@@ -93,6 +94,7 @@ function handlePasswordInput( mypassword,event) {
         } else {
             terminalContent.textContent += '\n' + 'Invalid username or password';
             prompt.textContent = 'CodeSphere@entrance:~$ ';
+            terminalInput.type = 'text'
             terminalInput.onkeypress = handleInput;
         }
         terminalInput.value = '';
