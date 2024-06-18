@@ -47,6 +47,7 @@
             </tbody>
         </table>
     </div>
+    {% if same_user == 'Yes' %}
     <div class="profile-container">
         <form action="/update_profile" method="POST">
             <label for="birthday">生日:</label>
@@ -68,6 +69,7 @@
             <button type="submit">更新資料</button>
         </form>    
     </div>
+    {% endif %}
     <script src="{{ url_for('static', filename='profile.js') }}"></script>
     <script src="{{ url_for('static', filename='navbar.js') }}"></script>
     <script>

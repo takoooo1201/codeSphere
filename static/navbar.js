@@ -29,7 +29,7 @@ function createNavbar(username) {
                     <a href="/eeclasslogin">eeclass extension</a>
                 </div>
                 <div class="nav-right">
-                    <a href="/profile">${username}</a>
+                    <a href="/profile/${username}">${username}</a>
                     <a href="/logout">Logout</a>
                 </div>
             </nav>

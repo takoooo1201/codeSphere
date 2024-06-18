@@ -444,10 +444,32 @@ def download():
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
-@app.route('/profile')
-def profile():
-    # 從資料庫獲取用戶數據
-    user = get_user_from_database()
+# @app.route('/profile')
+# def profile():
+#     # 從資料庫獲取用戶數據
+#     user = get_user_from_database()
+#     if user is None:
+#         return redirect(url_for('entrance'))
+#     posts = get_posts_from_database(user['id'])
+#     posts_amount = len(posts)
+#     comments = get_comments_from_database(user['id'])
+#     comments_amount = len(comments)
+#     likes = get_likes_from_database(user['id'])
+#     likes_amount = len(likes)
+
+#     return render_template('profile.html',
+#                            user=user,
+#                            posts=posts,
+#                            posts_amount=posts_amount,
+#                            comments_amount=comments_amount,
+#                            likes_amount = likes_amount
+#                            )
+
+@app.route('/profile/<username>')
+def profile(username):    # 從資料庫獲取用戶數據
+    if username == 'guest (not logged in)':
+        return redirect('/forum')
+    user = get_user_from_database(username)
     if user is None:
         return redirect(url_for('entrance'))
     posts = get_posts_from_database(user['id'])
@@ -456,13 +478,18 @@ def profile():
     comments_amount = len(comments)
     likes = get_likes_from_database(user['id'])
     likes_amount = len(likes)
+    if username == session['username']:
+        same_user = 'Yes'
+    else:
+        same_user = 'No' 
 
     return render_template('profile.html',
                            user=user,
                            posts=posts,
                            posts_amount=posts_amount,
                            comments_amount=comments_amount,
-                           likes_amount = likes_amount
+                           likes_amount = likes_amount,
+                           same_user = same_user
                            )
 
 @app.route('/update_profile', methods=['POST'])
@@ -504,12 +531,12 @@ def update_user_profile(gender, birthday, bio, website):
         conn.commit()
     conn.close()
 
-def get_user_from_database():
+def get_user_from_database(username):
     # 假設這裡有一個函數來從資料庫提取數據
     conn = get_db()
     cursor = conn.cursor()
-    if 'username' in session and session['username']:
-        cursor.execute('''select * from users where name = ?''', (session['username'],))
+    if username:
+        cursor.execute('''select * from users where name = ?''', (username,))
         res = cursor.fetchone()
         return {
             'id': res[0],
